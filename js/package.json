@@ -1,0 +1,16 @@
+{
+  "name": "esoteric",
+  "version": "1.0.0",
+  "description": "Esoteric language :(",
+  "module": "true",
+  "main": "index.sjs",
+  "scripts": {
+    "start": "node ."
+  },
+  "keywords": [
+    "esoteric",
+    "language"
+  ],
+  "author": "Crinax",
+  "license": "MIT"
+}
