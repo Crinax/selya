@@ -4,11 +4,13 @@ SELYA (Special Esoteric Language for Young and Adult) - it's esoteric language f
 ## Syntax
 
 So, probably, all of you already know, that in most programming languages such string as `0xA2` - is it hexadecimal number
+
 Well, Selya use it as often as it can :D
 
 Every each hexadecimal number that is used you, is written to corresponding cell. If you write number greater than `0xFFFF` or lower than `0x0000`, it calls the error `[Selya::MemoryError::InvalidValue] Invalid value in cell`
 
 Default the carriage installed to first position, but you can change it with operator `->` or `<-`
+
 Attention, if you try use operator `<-` in first position or use operator `->` in last position, it calls the error `[Selya::MemoryError::OutOfRange] Carriage out of boundaries of memory`
 
 ### Operators
