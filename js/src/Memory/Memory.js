@@ -29,7 +29,7 @@ export class Memory {
 	add(value) {
 		this._checkIfCorrect(value);
 
-		if (this._memory[this._currentPos] + value > Memory.MAX_VALUE) {
+		if ((this._memory[this._currentPos] + value) > Memory.MAX_VALUE) {
 			throw new MemoryError('Cell is overflowed', '::Overflow');
 		}
 
@@ -39,7 +39,7 @@ export class Memory {
 	xor(value) {
 		this._checkIfCorrect(value);
 
-		if (this._memory[this._currentPos] ^ value > Memory.MAX_VALUE) {
+		if ((this._memory[this._currentPos] ^ value) > Memory.MAX_VALUE) {
 			throw new MemoryError('Cell is overflowed', '::Overflow');
 		}
 

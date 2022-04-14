@@ -228,7 +228,6 @@ export class Parser {
     try {
       this._memory[method](...args);
     } catch (err) {
-      console.log(err);
       if (err instanceof MemoryError) {
         this._callSelyaError();
         console.log(`${err.name}: ${err.message}`);
