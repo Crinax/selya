@@ -29,9 +29,7 @@ export class Interpreter {
           this._parser._memory.output();
           process.exit(0);
         } else {
-          if (!this._parser.parse(stringData)) {
-            console.log('Something went wrong');
-          }
+          this._parser.parse(stringData)
 
           process.stdout.write('=> ');
         }

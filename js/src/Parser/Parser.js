@@ -141,10 +141,6 @@ export class Parser {
                 return false;
               }
             } else {
-              console.log({
-                operand,
-                operator,
-              });
               if (!this._tryMemoryWrapper('write', parseInt(operand, 16))) {
                 return false;
               }
