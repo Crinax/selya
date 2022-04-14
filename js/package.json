@@ -3,14 +3,22 @@
   "version": "1.0.0",
   "description": "Esoteric language :(",
   "module": "true",
-  "main": "index.sjs",
+  "main": "dist",
   "scripts": {
-    "start": "node ."
+    "build": "babel src -d dist",
+    "start": "npm run build && npm run load",
+    "load": "node ."
   },
   "keywords": [
     "esoteric",
     "language"
   ],
   "author": "Crinax",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "babel-preset-minify": "^0.5.1"
+  }
 }
