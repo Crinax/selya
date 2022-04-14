@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),Object.defineProperty(exports,"MemoryError",{enumerable:!0,get:function get(){return _MemoryError.MemoryError}}),Object.defineProperty(exports,"ParserError",{enumerable:!0,get:function get(){return _ParserError.ParserError}});var _MemoryError=require("./MemoryError"),_ParserError=require("./ParserError");
