@@ -24,6 +24,8 @@ export class Parser {
       }
 
       this._memory = new Memory(memorySize);
+
+      return true;
     } catch (err) {
       if (err instanceof MemoryError) {
         this._callSelyaError();
@@ -37,7 +39,7 @@ export class Parser {
   }
 
   parse(code) {
-    this._currentPosition = { line: 1, symbol: 7 };
+    this._currentPosition = { line: 1, symbol: 0 };
     
     let operand = '';
     let operator = '';
@@ -46,7 +48,7 @@ export class Parser {
     let isBeginingOfNumber = false;
     let isZeroAtBegin = false;
 
-    for (let i = 6; i < code.length; i++) {
+    for (let i = 0; i < code.length; i++) {
       this._currentPosition.symbol++;
 
       if (code[i] === '\n') {
@@ -64,11 +66,15 @@ export class Parser {
         if (operator.length < 3 && isBeginingOfOperator) {
           this._currentPosition.symbol = this._currentPosition.symbol - operator.length;
           this._throwUnknownOperatorError();
+
+          return false;
         }
 
         if (operand.length < 6 && isBeginingOfNumber) {
           this._currentPosition.symbol = this._currentPosition.symbol - operand.length;
           this._throwErrorOperatorTooSmall();
+
+          return false;
         }
 
         continue;
@@ -87,6 +93,8 @@ export class Parser {
       if ((code[i] === '-' || code[i] === '[' || code[i] === '<') && !isBeginingOfOperator) {
         if (isBeginingOfNumber) {
           this._throwUnrecognizedError();
+
+          return false;
         }
 
         isBeginingOfOperator = true;
@@ -114,13 +122,13 @@ export class Parser {
 
           if (isOperatorNeededOperand) {
             if (operator === this._operator.add) {
-              if (!this._tryMemoryWrapper(this._memory, 'add', parseInt(operand, 16))) {
+              if (!this._tryMemoryWrapper('add', parseInt(operand, 16))) {
                 return false;
               }
             }
 
             if (operator === this._operator.xor) {
-              if (!this._tryMemoryWrapper(this._memory, 'xor', parseInt(operand, 16))) {
+              if (!this._tryMemoryWrapper('xor', parseInt(operand, 16))) {
                 return false;
               }
             }
@@ -128,8 +136,18 @@ export class Parser {
             operator = '';
             isOperatorNeededOperand = false;
           } else {
-            if (!this._tryMemoryWrapper(this._memory, 'write', parseInt(operand, 16))) {
-              return false;
+            if (this._memory === undefined) {
+              if (!this.setupMemory(operand)) {
+                return false;
+              }
+            } else {
+              console.log({
+                operand,
+                operator,
+              });
+              if (!this._tryMemoryWrapper('write', parseInt(operand, 16))) {
+                return false;
+              }
             }
           }
 
@@ -138,8 +156,16 @@ export class Parser {
       }
 
       if (isBeginingOfOperator) {
+        if (this._memory === undefined) {
+          this._throwInvalidMemorySize();
+
+          return false;
+        }
+
         if (isOperatorNeededOperand) {
           this._throwOperatorNeededOperandError();
+
+          return false;
         }
 
         operator += code[i];
@@ -162,7 +188,7 @@ export class Parser {
 
           switch (operator) {
             case this._operator.lshiftIndex: {
-              if (!this._tryMemoryWrapper(this._memory, 'lshiftIndex')) {
+              if (!this._tryMemoryWrapper('lshiftIndex')) {
                 return false;
               }
 
@@ -170,7 +196,7 @@ export class Parser {
             }
 
             case this._operator.rshiftIndex: {
-              if (!this._tryMemoryWrapper(this._memory, 'rshiftIndex')) {
+              if (!this._tryMemoryWrapper('rshiftIndex')) {
                 return false;
               }
 
@@ -178,7 +204,7 @@ export class Parser {
             }
 
             case this._operator.lshift: {
-              if (!this._tryMemoryWrapper(this._memory, 'lshift')) {
+              if (!this._tryMemoryWrapper('lshift')) {
                 return false;
               }
 
@@ -186,7 +212,7 @@ export class Parser {
             }
 
             case this._operator.rshift: {
-              if (!this._tryMemoryWrapper(this._memory, 'rshift')) {
+              if (!this._tryMemoryWrapper('rshift')) {
                 return false;
               }
 
@@ -198,12 +224,15 @@ export class Parser {
         }
       }
     }
+
+    return true;
   }
 
   _tryMemoryWrapper(method, ...args) {
     try {
       this._memory[method](...args);
     } catch (err) {
+      console.log(err);
       if (err instanceof MemoryError) {
         this._callSelyaError();
         console.log(`${err.name}: ${err.message}`);
