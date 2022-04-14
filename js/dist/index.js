@@ -1,1 +1,1 @@
-"use strict";var _Memory=require("./Memory"),_Parser=require("./Parser"),memory=new _Memory.Memory(2),parser=new _Parser.Parser;parser.newParse("0x000F --> 0x0010 [+] 0x0001",memory),memory.output();
+"use strict";var _Interpreter=require("./Interpreter"),repl=new _Interpreter.Interpreter;repl.run();

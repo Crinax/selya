@@ -1,1 +1,1 @@
-export { Compiler } from './Interpreter';
+export { Interpreter } from './Interpreter';

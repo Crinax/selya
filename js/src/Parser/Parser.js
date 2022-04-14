@@ -1,4 +1,5 @@
 import { ParserError, MemoryError } from '../ErrorHandlers';
+import { Memory } from '../Memory';
 
 export class Parser {
   _operator = {
@@ -11,10 +12,32 @@ export class Parser {
   };
   _testRegex = new RegExp('[^\-\>\<\[\]\+0-9a-fA-Fx\n ]');
   _numbers = '0123456789ABCDEFabcdef';
-  _currentPosition = { line: 1, symbol: 0 };
+  _currentPosition = { line: 1, symbol: 1 };
+  _memory;
 
-  parse(code, memory) {
-    this._currentPosition = { line: 1, symbol: 0 };
+  setupMemory(code) {
+    try {
+      const memorySize = parseInt(code.slice(0, 6));
+
+      if (isNaN(memorySize)) {
+        this._throwInvalidMemorySize();
+      }
+
+      this._memory = new Memory(memorySize);
+    } catch (err) {
+      if (err instanceof MemoryError) {
+        this._callSelyaError();
+        console.log(`${err.name}: ${err.message}`);
+      } else {
+        this._throwInvalidMemorySize();
+      }
+
+      return false;
+    }
+  }
+
+  parse(code) {
+    this._currentPosition = { line: 1, symbol: 7 };
     
     let operand = '';
     let operator = '';
@@ -23,7 +46,7 @@ export class Parser {
     let isBeginingOfNumber = false;
     let isZeroAtBegin = false;
 
-    for (let i = 0; i < code.length; i++) {
+    for (let i = 6; i < code.length; i++) {
       this._currentPosition.symbol++;
 
       if (code[i] === '\n') {
@@ -91,13 +114,13 @@ export class Parser {
 
           if (isOperatorNeededOperand) {
             if (operator === this._operator.add) {
-              if (!this._tryMemoryWrapper(memory, 'add', parseInt(operand, 16))) {
+              if (!this._tryMemoryWrapper(this._memory, 'add', parseInt(operand, 16))) {
                 return false;
               }
             }
 
             if (operator === this._operator.xor) {
-              if (!this._tryMemoryWrapper(memory, 'xor', parseInt(operand, 16))) {
+              if (!this._tryMemoryWrapper(this._memory, 'xor', parseInt(operand, 16))) {
                 return false;
               }
             }
@@ -105,7 +128,7 @@ export class Parser {
             operator = '';
             isOperatorNeededOperand = false;
           } else {
-            if (!this._tryMemoryWrapper(memory, 'write', parseInt(operand, 16))) {
+            if (!this._tryMemoryWrapper(this._memory, 'write', parseInt(operand, 16))) {
               return false;
             }
           }
@@ -139,7 +162,7 @@ export class Parser {
 
           switch (operator) {
             case this._operator.lshiftIndex: {
-              if (!this._tryMemoryWrapper(memory, 'lshiftIndex')) {
+              if (!this._tryMemoryWrapper(this._memory, 'lshiftIndex')) {
                 return false;
               }
 
@@ -147,7 +170,7 @@ export class Parser {
             }
 
             case this._operator.rshiftIndex: {
-              if (!this._tryMemoryWrapper(memory, 'rshiftIndex')) {
+              if (!this._tryMemoryWrapper(this._memory, 'rshiftIndex')) {
                 return false;
               }
 
@@ -155,7 +178,7 @@ export class Parser {
             }
 
             case this._operator.lshift: {
-              if (!this._tryMemoryWrapper(memory, 'lshift')) {
+              if (!this._tryMemoryWrapper(this._memory, 'lshift')) {
                 return false;
               }
 
@@ -163,7 +186,7 @@ export class Parser {
             }
 
             case this._operator.rshift: {
-              if (!this._tryMemoryWrapper(memory, 'rshift')) {
+              if (!this._tryMemoryWrapper(this._memory, 'rshift')) {
                 return false;
               }
 
@@ -177,9 +200,9 @@ export class Parser {
     }
   }
 
-  _tryMemoryWrapper(memory, method, ...args) {
+  _tryMemoryWrapper(method, ...args) {
     try {
-      memory[method](...args);
+      this._memory[method](...args);
     } catch (err) {
       if (err instanceof MemoryError) {
         this._callSelyaError();
@@ -214,5 +237,10 @@ export class Parser {
   _throwOperatorNeededOperandError() {
     this._callSelyaError();
     new ParserError('Operand expected', '::UnexpectedOperator').log();
+  }
+
+  _throwInvalidMemorySize() {
+    this._callSelyaError();
+    new ParserError('Invalid memory size', '::MemorySize').log();
   }
 }

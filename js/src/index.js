@@ -1,9 +1,5 @@
-import { Memory } from './Memory';
-import { Parser } from './Parser';
+import { Interpreter } from './Interpreter';
 
-const memory = new Memory(0x2);
-const parser = new Parser();
+const repl = new Interpreter();
 
-parser.parse('0x000F --> 0x0010 [+] 0x0001', memory);
-
-memory.output();
+repl.run();
