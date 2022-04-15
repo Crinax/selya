@@ -34,5 +34,3 @@ In addition to Selya operators, it also has commands:
 1. First value that you write - memory size. Memory size can be greater than `0x1` and lower than `0xFFFF`, another values call error `[Selya::Memory] Invalid memory size`
 2. You cannot use undefined characters, it calls the error `[Selya::Parser::UnrecognizedSymbol] Unrecognized symbol`
 666. You can get the satanic power by 6 words :D
-
-

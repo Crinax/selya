@@ -15,7 +15,6 @@ export class Interpreter {
         .readFileSync(this._file)
         .toString();
 
-      this._parser.setupMemory(fileContent);
       this._parser.parse(fileContent);
     } else {
       console.clear();
@@ -25,8 +24,8 @@ export class Interpreter {
       process.stdin.on('data', data => {
         const stringData = data.slice(0, -1).toString();
         
-        if (stringData === 'exit') {
-          this._parser._memory.output();
+        if (stringData.trim() === 'exit') {
+          this._parser._memory.execute();
           process.exit(0);
         } else {
           this._parser.parse(stringData)

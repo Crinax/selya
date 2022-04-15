@@ -74,6 +74,10 @@ export class Memory {
 		console.log(this._memory);
 	}
 
+	execute() {
+		console.log(Buffer.from(this._memory).toString())
+	}
+
 	_checkIfCorrect(value) {
 		if (value > 0xFFFF || value < 0x0) {
 			throw new MemoryError('Invalid value', '::InvalidValue')
