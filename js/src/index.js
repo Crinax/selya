@@ -1,5 +1,18 @@
+import process from 'process';
 import { Interpreter } from './Interpreter';
 
-const repl = new Interpreter();
+class Comander {
+  constructor(...params) {
+    let file = undefined;
 
-repl.run();
+    if (/.+?\.sl/.test(params[0])) {
+      file = params[0]
+    }
+
+    const interpreter = new Interpreter(file);
+    
+    interpreter.run();
+  }
+}
+
+const comander = new Comander(...process.argv.slice(2));
