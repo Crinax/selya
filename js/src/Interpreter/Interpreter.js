@@ -16,6 +16,7 @@ export class Interpreter {
         .toString();
 
       this._parser.parse(fileContent);
+      this._parser._memory.execute();
     } else {
       console.clear();
       console.log('[Selya::Repl] Write "exit" to exit the repl');
